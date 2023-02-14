@@ -1,13 +1,12 @@
 import logging
 import os
 import pathlib
+import re
 import shlex
 import subprocess
 import unittest
 
 logger = logging.getLogger(__name__)
-
-GLAUTH = "glauth_0+git.2533933-dirty_amd64.snap"
 
 class TestSnap(unittest.TestCase):
     """Unit test GLAuth snap."""
@@ -18,23 +17,25 @@ class TestSnap(unittest.TestCase):
         logger.info("Building snap")
         os.chdir("..")
         subprocess.run("snapcraft")
+        cls.GLAUTH = re.findall(r'(glauth.*?snap)', " ".join(os.listdir()))[0]
 
     @classmethod
     def tearDownClass(cls) -> None:
         """Test class teardown."""
-        pathlib.Path(GLAUTH).unlink(missing_ok=True)
+        pathlib.Path(cls.GLAUTH).unlink(missing_ok=True)
         subprocess.run(shlex.split("snap remove glauth"))
 
     def test_build(self):
         """Test snap build status."""
-        self.assertTrue(pathlib.Path(GLAUTH).exists())
+        logger.info(f"Checking for snap {TestSnap.GLAUTH}...")
+        self.assertTrue(pathlib.Path(TestSnap.GLAUTH).exists())
     
     def test_run(self):
         """Test snap run status."""
-        logger.info("Installing glauth snap...")
-        subprocess.run(shlex.split(f"snap install {GLAUTH} --devmode --dangerous"))
+        logger.info(f"Installing glauth snap {TestSnap.GLAUTH}...")
+        subprocess.run(shlex.split(f"sudo snap install {TestSnap.GLAUTH} --devmode --dangerous"))
         logger.info("Finished glauth snap install!")
-        version = subprocess.run(
+        source = subprocess.run(
             shlex.split("which glauth"), stdout=subprocess.PIPE, text=True
         ).stdout.strip("\n")
-        self.assertEqual(version, "/snap/bin/glauth")
+        self.assertEqual(source, "/snap/bin/glauth")

@@ -25,9 +25,14 @@ apps:
 
 parts:
   glauth:
-    # See 'snapcraft plugins'
     plugin: go
+    build-snaps:
+      - go
     source-subdir: v2
     source-type: git
     source: https://github.com/glauth/glauth
+    source-tag: "v2.2.0-RC1"
+    override-pull: |
+      snapcraftctl pull
+      snapcraftctl set-version "$(git describe)"
 
