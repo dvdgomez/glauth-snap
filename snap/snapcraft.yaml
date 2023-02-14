@@ -1,5 +1,5 @@
 name: glauth
-base: core20
+base: core22
 version: git
 summary: A lightweight LDAP server for development, home use, or CI
 description: |
@@ -25,14 +25,18 @@ apps:
 
 parts:
   glauth:
-    plugin: go
+    plugin: make
     build-snaps:
       - go
+    make-parameters: ["fast"]
     source-subdir: v2
     source-type: git
     source: https://github.com/glauth/glauth
     source-tag: "v2.2.0-RC1"
-    override-pull: |
-      snapcraftctl pull
-      snapcraftctl set-version "$(git describe)"
+    override-build: |
+      # Build GLAuth
+      make -j$CRAFT_PARALLEL_BUILD_COUNT fast
+
+      # Grab built binary
+      cp -r ./bin $CRAFT_PART_INSTALL/glauth
 
