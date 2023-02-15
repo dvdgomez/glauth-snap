@@ -24,10 +24,10 @@ jobs:
       - ci-test-and-build
     steps:
       - name: Download built snap file
-          uses: actions/download-artifact@v3
-          with:
-            name: ${{ needs.ci-test-and-build.outputs.snap-file }}
-            path: .
+        uses: actions/download-artifact@v3
+        with:
+          name: ${{ needs.ci-test-and-build.outputs.snap-file }}
+          path: .
       - name: Publish built snap to Store
         uses: snapcore/action-publish@v1
         env:
