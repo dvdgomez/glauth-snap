@@ -1,3 +1,8 @@
+# Copyright 2023 Canonical Ltd.
+# See LICENSE file for licensing details.
+
+"""Test minimal snap."""
+
 import logging
 import os
 import pathlib
@@ -8,6 +13,7 @@ import unittest
 
 logger = logging.getLogger(__name__)
 
+
 class TestSnap(unittest.TestCase):
     """Unit test GLAuth snap."""
 
@@ -15,9 +21,11 @@ class TestSnap(unittest.TestCase):
     def setUpClass(cls) -> None:
         """Test class setup."""
         logger.info("Building snap")
-        os.chdir("..")
+        # Go up 3 levels from test file
+        os.chdir("/".join(__file__.split("/")[:-3]))
         subprocess.run("snapcraft")
-        cls.GLAUTH = re.findall(r'(glauth.*?snap)', " ".join(os.listdir()))[0]
+        # Find generated snap
+        cls.GLAUTH = re.findall(r"(glauth.*?snap)", " ".join(os.listdir()))[0]
 
     @classmethod
     def tearDownClass(cls) -> None:
@@ -29,7 +37,7 @@ class TestSnap(unittest.TestCase):
         """Test snap build status."""
         logger.info(f"Checking for snap {TestSnap.GLAUTH}...")
         self.assertTrue(pathlib.Path(TestSnap.GLAUTH).exists())
-    
+
     def test_run(self):
         """Test snap run status."""
         logger.info(f"Installing glauth snap {TestSnap.GLAUTH}...")
