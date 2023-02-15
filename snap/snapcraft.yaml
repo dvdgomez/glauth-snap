@@ -35,8 +35,9 @@ parts:
     source-tag: "v2.2.0-RC1"
     override-build: |
       # Build GLAuth
-      make -j$CRAFT_PARALLEL_BUILD_COUNT fast
+      make -C $CRAFT_PART_SRC_WORK -j$CRAFT_PARALLEL_BUILD_COUNT fast
 
       # Grab built binary
-      cp -r ./bin $CRAFT_PART_INSTALL/glauth
+      mkdir -p $CRAFT_PART_INSTALL/bin
+      cp -r $CRAFT_PART_SRC_WORK/bin/*/glauth $CRAFT_PART_INSTALL/bin/
 
