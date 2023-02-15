@@ -1,5 +1,6 @@
 name: glauth
 base: core22
+adopt-info: glauth
 version: git
 summary: A lightweight LDAP server for development, home use, or CI
 description: |
@@ -34,6 +35,9 @@ parts:
     source: https://github.com/glauth/glauth
     source-tag: "v2.2.0-RC1"
     override-build: |
+      # Set the version of the snap
+      craftctl set version="$(git describe)"
+
       # Build GLAuth
       make -C $CRAFT_PART_SRC_WORK -j$CRAFT_PARALLEL_BUILD_COUNT fast
 
