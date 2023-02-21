@@ -7,11 +7,12 @@ import logging
 import os
 import pathlib
 import re
-import requests
 import shlex
 import subprocess
 import time
 import unittest
+
+import requests
 
 logger = logging.getLogger(__name__)
 
