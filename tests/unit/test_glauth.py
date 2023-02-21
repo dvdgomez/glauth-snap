@@ -7,8 +7,10 @@ import logging
 import os
 import pathlib
 import re
+import requests
 import shlex
 import subprocess
+import time
 import unittest
 
 logger = logging.getLogger(__name__)
@@ -47,3 +49,13 @@ class TestSnap(unittest.TestCase):
             shlex.split("which glauth"), stdout=subprocess.PIPE, text=True
         ).stdout.strip("\n")
         self.assertEqual(source, "/snap/bin/glauth")
+
+    def test_run_config(self):
+        """Test snap network status."""
+        logger.info("Testing network status")
+        wait = subprocess.Popen(shlex.split("glauth -c sample-simple.cfg"))
+        time.sleep(5)
+        # Check snap responses
+        response = requests.get("http://localhost:5555")
+        self.assertEqual(response.status_code, 200)
+        wait.kill()

@@ -17,8 +17,8 @@ description: |
   Multiple backends can be chained to inject features.
   Use it to centralize account management across your Linux servers, your OSX machines, and your support applications (Jenkins, Apache/Nginx, Graylog2, and many more!).
 
-grade: devel
-confinement: devmode
+grade: stable
+confinement: strict
 
 apps:
   glauth:
@@ -50,3 +50,7 @@ parts:
       mkdir -p $CRAFT_PART_INSTALL/bin
       cp -r $CRAFT_PART_SRC_WORK/bin/*/glauth $CRAFT_PART_INSTALL/bin/
 
+      # Copy Config File
+      cp $CRAFT_PART_SRC_WORK/sample-simple.cfg $CRAFT_PROJECT_DIR/sample-simple.cfg
+    organize:
+      "sample-simple.cfg": sample-simple.cfg
