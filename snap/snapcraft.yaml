@@ -25,6 +25,8 @@ apps:
     command: bin/glauth
     plugs:
       - home
+      - network
+      - network-bind
 
 
 parts:
