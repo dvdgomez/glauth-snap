@@ -65,7 +65,9 @@ jobs:
         id: snapcraft
 
       - name: Upload locally built snap artifact
-        uses: actions/upload-artifact@v3
+        uses: snapcore/action-publish@v1
+        env:
+          SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.STORE_LOGIN }}
         with:
-          name: local-${{ steps.snapcraft.outputs.snap }}
-          path: ${{ steps.snapcraft.outputs.snap }}
+          snap: ${{ steps.snapcraft.outputs.snap }}
+          release: edge
