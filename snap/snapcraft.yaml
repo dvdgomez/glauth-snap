@@ -27,8 +27,6 @@ apps:
       - home
       - network
       - network-bind
-
-
 parts:
   glauth:
     plugin: make
