@@ -1,0 +1,61 @@
+# Copyright 2023 Canonical Ltd.
+# See LICENSE file for licensing details.
+---
+name: glauth
+base: core22
+adopt-info: glauth
+version: git
+summary: A lightweight LDAP server for development, home use, or CI
+description: |
+  Go-lang LDAP Authentication (GLAuth) is a secure, easy-to-use,
+   LDAP server w/ configurable backends.
+
+  Centrally manage accounts across your infrastructure.
+  Centrally manage SSH keys, Linux accounts, and passwords for cloud servers.
+  Lightweight alternative to OpenLDAP and Active Directory for development, or
+   a homelab.
+  Store your user directory in a file, local or in S3; SQL database; or proxy
+   to existing LDAP servers.
+  Two Factor Authentication (transparent to applications).
+  Multiple backends can be chained to inject features.
+  Use it to centralize account management across your Linux servers, your OSX
+   machines, and your support applications (Jenkins, Apache/Nginx, Graylog2,
+    and many more!).
+
+grade: stable
+confinement: strict
+
+apps:
+  glauth:
+    command: bin/glauth
+    plugs:
+      - home
+      - network
+      - network-bind
+
+parts:
+  glauth:
+    plugin: make
+    build-snaps:
+      - go
+    make-parameters: ["fast"]
+    source-subdir: v2
+    source-type: git
+    source: https://github.com/glauth/glauth
+    source-tag: "v2.2.0-RC1"
+    override-build: |
+      # Set the version of the snap
+      craftctl set version="$(git describe)"
+
+      # Build GLAuth
+      make -C $CRAFT_PART_SRC_WORK -j$CRAFT_PARALLEL_BUILD_COUNT fast
+
+      # Grab built binary
+      mkdir -p $CRAFT_PART_INSTALL/bin
+      cp -r $CRAFT_PART_SRC_WORK/bin/*/glauth $CRAFT_PART_INSTALL/bin/
+
+      # Copy Config File
+      cp $CRAFT_PART_SRC_WORK/sample-simple.cfg \
+       $CRAFT_PROJECT_DIR/sample-simple.cfg
+    organize:
+      "sample-simple.cfg": sample-simple.cfg
