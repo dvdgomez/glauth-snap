@@ -54,7 +54,7 @@ parts:
       cp -r $CRAFT_PART_SRC_WORK/bin/*/glauth $CRAFT_PART_INSTALL/bin/
 
       # Copy Config File
-      cp $CRAFT_PART_SRC_WORK/sample-simple.cfg
+      cp $CRAFT_PART_SRC_WORK/sample-simple.cfg \
        $CRAFT_PROJECT_DIR/sample-simple.cfg
     organize:
       "sample-simple.cfg": sample-simple.cfg

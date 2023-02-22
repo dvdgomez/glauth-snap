@@ -23,18 +23,19 @@ class TestSnap(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         """Test class setup."""
+        subprocess.run(shlex.split("tox -e clean"))
         logger.info("Building snap")
         # Go up 3 levels from test file
         os.chdir("/".join(__file__.split("/")[:-3]))
-        subprocess.run("snapcraft")
+        subprocess.run(shlex.split("tox -e snap"))
         # Find generated snap
         cls.GLAUTH = re.findall(r"(glauth.*?snap)", " ".join(os.listdir()))[0]
 
     @classmethod
     def tearDownClass(cls) -> None:
         """Test class teardown."""
-        pathlib.Path(cls.GLAUTH).unlink(missing_ok=True)
-        subprocess.run(shlex.split("snap remove glauth"))
+        pathlib.Path("sample-simple.cfg").unlink(missing_ok=True)
+        subprocess.run(shlex.split("tox -e clean"))
 
     def test_build(self):
         """Test snap build status."""
@@ -44,7 +45,7 @@ class TestSnap(unittest.TestCase):
     def test_run(self):
         """Test snap run status."""
         logger.info(f"Installing glauth snap {TestSnap.GLAUTH}...")
-        subprocess.run(shlex.split(f"sudo snap install {TestSnap.GLAUTH} --devmode --dangerous"))
+        subprocess.run(shlex.split("tox -e install"))
         logger.info("Finished glauth snap install!")
         source = subprocess.run(
             shlex.split("which glauth"), stdout=subprocess.PIPE, text=True
