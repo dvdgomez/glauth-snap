@@ -1,0 +1,14 @@
+#!/bin/bash
+
+set -ex
+
+# Create cert, config, and key directories
+mkdir -p $SNAP_COMMON/etc/glauth/glauth.d/
+mkdir $SNAP_COMMON/etc/glauth/certs.d/
+mkdir $SNAP_COMMON/etc/glauth/keys.d/
+
+# Copy over sample bootstrap config
+cp $SNAP/sample-simple.cfg $SNAP_COMMON/etc/glauth/glauth.d/sample-simple.cfg
+
+# Create bootstrap cert and key
+openssl req -x509 -newkey rsa:4096 -keyout $SNAP_COMMON/etc/glauth/keys.d/glauth.key -out $SNAP_COMMON/etc/glauth/certs.d/glauth.crt -days 365 -nodes -subj "/CN=`hostname`"

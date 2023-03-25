@@ -27,7 +27,12 @@ confinement: strict
 
 apps:
   glauth:
-    command: bin/glauth
+    environment:
+      CERT: $SNAP_COMMON/etc/glauth/certs.d/glauth.crt
+      KEY: $SNAP_COMMON/etc/glauth/keys.d/glauth.key
+      CONFIG: $SNAP_COMMON/etc/glauth/glauth.d/sample-simple.cfg
+    command: bin/glauth -c $CONFIG --ldaps-key $KEY --ldaps-cert $CERT
+    daemon: simple
     plugs:
       - home
       - network
@@ -54,8 +59,6 @@ parts:
       mkdir -p $CRAFT_PART_INSTALL/bin
       cp -r $CRAFT_PART_SRC_WORK/bin/*/glauth $CRAFT_PART_INSTALL/bin/
 
-      # Copy Config File
+      # Copy over sample config from source repo
       cp $CRAFT_PART_SRC_WORK/sample-simple.cfg \
-       $CRAFT_PROJECT_DIR/sample-simple.cfg
-    organize:
-      "sample-simple.cfg": sample-simple.cfg
+       $CRAFT_PART_INSTALL/sample-simple.cfg
