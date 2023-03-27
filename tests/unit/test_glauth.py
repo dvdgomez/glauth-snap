@@ -34,7 +34,6 @@ class TestSnap(unittest.TestCase):
     @classmethod
     def tearDownClass(cls) -> None:
         """Test class teardown."""
-        pathlib.Path("sample-simple.cfg").unlink(missing_ok=True)
         subprocess.run(shlex.split("tox -e clean"))
 
     def test_build(self):
@@ -48,16 +47,23 @@ class TestSnap(unittest.TestCase):
         subprocess.run(shlex.split("tox -e install"))
         logger.info("Finished glauth snap install!")
         source = subprocess.run(
-            shlex.split("which glauth"), stdout=subprocess.PIPE, text=True
+            shlex.split("snap services glauth"), stdout=subprocess.PIPE, text=True
         ).stdout.strip("\n")
-        self.assertEqual(source, "/snap/bin/glauth")
+        self.assertTrue("active" in source)
 
     def test_run_config(self):
         """Test snap network status."""
         logger.info("Testing network status")
-        wait = subprocess.Popen(shlex.split("glauth -c sample-simple.cfg"))
         time.sleep(5)
-        # Check snap responses
+        # Check REST API snap response
         response = requests.get("http://localhost:5555")
         self.assertEqual(response.status_code, 200)
-        wait.kill()
+        # Check if ldap/s are listening
+        ldap = subprocess.run(
+            shlex.split("sudo lsof -i :3893"), stdout=subprocess.PIPE, text=True
+        ).stdout.strip("\n")
+        self.assertTrue("LISTEN" in ldap)
+        ldaps = subprocess.run(
+            shlex.split("sudo lsof -i :3894"), stdout=subprocess.PIPE, text=True
+        ).stdout.strip("\n")
+        self.assertTrue("LISTEN" in ldaps)
