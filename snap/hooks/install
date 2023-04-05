@@ -1,0 +1,8 @@
+#!/bin/bash
+
+set -ex
+
+# Create cert, config, and key directories
+mkdir -p $SNAP_COMMON/etc/glauth/glauth.d/
+mkdir $SNAP_COMMON/etc/glauth/certs.d/
+mkdir $SNAP_COMMON/etc/glauth/keys.d/
